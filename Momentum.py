@@ -3,11 +3,12 @@ import numpy as np
 
 # fitting Y = X1 + 2*X2
 # Loss Function: MSE
-def SGD(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001):
+def Momentum(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001, momentum = 0.1):
     m = len(y)
 
     # initialize
     error = 0
+    gradient = 0 # initialize gradient
 
     # define a for loop
     for i in range(iterations):
@@ -18,7 +19,8 @@ def SGD(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001):
         if abs(error) <= threshold:
             break
 
-        theta -= learning_rate * (x[j] * (np.dot(x[j], theta) - y[j]))
+        gradient = momentum * gradient + learning_rate * (x[j] * (np.dot(x[j], theta) - y[j]))
+        theta -= gradient
 
     print('multi features：', 'numbers of iteration：%d' % (i + 1), 'theta：', theta, 'error：%f' % error)
 
@@ -28,4 +30,4 @@ if __name__ == '__main__':
     Y1 = np.array([3, 5, 6, 5, 7, 10, 8, 9])
 #    theta1 = np.array([0.0,0.0])
     theta1 = np.zeros(2)
-    SGD(X1, Y1, theta1)
+    Momentum(X1, Y1, theta1)

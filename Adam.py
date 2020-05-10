@@ -1,13 +1,16 @@
 import numpy as np
-
+import math
 
 # fitting Y = X1 + 2*X2
 # Loss Function: MSE
-def SGD(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001):
+def Adam(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001, momentum = 0.1, beta1 = 0.9, beta2 = 0.9):
     m = len(y)
 
     # initialize
     error = 0
+    mt = theta1
+    vt = theta1
+    e = 0.00000001
 
     # define a for loop
     for i in range(iterations):
@@ -18,7 +21,13 @@ def SGD(x, y, theta, learning_rate = 0.01, iterations = 1000, threshold=0.0001):
         if abs(error) <= threshold:
             break
 
-        theta -= learning_rate * (x[j] * (np.dot(x[j], theta) - y[j]))
+        gradient = x[j] * (np.dot(x[j], theta) - y[j])
+        mt = beta1 * mt + (1 - beta1) * gradient
+        vt = beta2 * vt + (1 - beta2) * (gradient ** 2)
+        mtt = mt / (1 - (beta1 ** (i + 1)))
+        vtt = vt / (1 - (beta2 ** (i + 1)))
+        vtt_sqrt = np.array([math.sqrt(vtt[0]), math.sqrt(vtt[1])])  # sqrt func only works for scalar
+        theta = theta - learning_rate * mtt / (vtt_sqrt + e)
 
     print('multi features：', 'numbers of iteration：%d' % (i + 1), 'theta：', theta, 'error：%f' % error)
 
@@ -28,4 +37,4 @@ if __name__ == '__main__':
     Y1 = np.array([3, 5, 6, 5, 7, 10, 8, 9])
 #    theta1 = np.array([0.0,0.0])
     theta1 = np.zeros(2)
-    SGD(X1, Y1, theta1)
+    Adam(X1, Y1, theta1)
